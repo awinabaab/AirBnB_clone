@@ -9,7 +9,7 @@ class TestFileStorage(unittest.TestCase):
     """Test Suite"""
 
     def setUp(self):
-        """Setup instances of FileStorage"""
+        """Setup instances of FileStorage class for tests"""
         self.storage = FileStorage()
         self.instance = BaseModel()
 
