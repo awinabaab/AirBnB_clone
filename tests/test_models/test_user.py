@@ -9,7 +9,7 @@ class TestUser(unittest.TestCase):
     """Test Suite"""
 
     def setUp(self):
-        """Setup instances of User"""
+        """Setup instances of User class for tests"""
         self.obj_dict = {"id": "7ae56a93-0712-43db-bd33-14d63aa60184",
                          "name": "Abdul",
                          "age": 25,
