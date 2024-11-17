@@ -9,7 +9,7 @@ class TestAmenity(unittest.TestCase):
     """Test Suite"""
 
     def setUp(self):
-        """Setup instances of Amenity"""
+        """Setup instances of Amenity class for tests"""
         self.obj_dict = {"id": "7ae56a93-0712-43db-bd33-14d63aa60184",
                          "name": "Swimming Pool",
                          "created_at": "2024-11-12T16:13:19.651327",
