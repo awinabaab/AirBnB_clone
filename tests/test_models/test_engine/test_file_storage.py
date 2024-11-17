@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import unittest
 import os
 from models.engine.file_storage import FileStorage
@@ -29,6 +30,15 @@ class TestFileStorage(unittest.TestCase):
         objects = self.storage.all()
         self.assertIsInstance(objects, dict)
 
+    def test_all_contains_correct_classes(self):
+        """Test that 'all' contains correct class names"""
+        obj = BaseModel()
+        self.storage.new(obj)
+        instances = self.storage.all()
+        for key in instances.keys():
+            cls_name = instances[key].__class__.__name__
+            self.assertEqual(cls_name, "BaseModel")
+
     def test_new_adds_object(self):
         """Test that 'new' method adds an object to storage"""
         obj = BaseModel()
@@ -36,12 +46,32 @@ class TestFileStorage(unittest.TestCase):
         key = f"{obj.__class__.__name__}.{obj.id}"
         self.assertIn(key, self.storage.all())
 
+    def test_new_raises_error_with_invalid_input(self):
+        """Test 'new' raises an error if input is not BaseModel"""
+        with self.assertRaises(AttributeError):
+            self.storage.new(None)
+
     def test_save_creates_file(self):
         """Test that 'save' creates a JSON file"""
         obj = BaseModel()
         self.storage.new(obj)
         self.storage.save()
         self.assertTrue(os.path.exists(self.file_path))
+
+    def test_save_overwrites_file(self):
+        """Test that 'save' overwrites the existing file"""
+        obj1 = BaseModel()
+        obj1.save()
+        with open(self.file_path, 'r') as file:
+            content = file.read()
+        self.assertIn(obj1.id, content)
+
+        obj2 = BaseModel()
+        obj2.save()
+        with open(self.file_path, 'r') as file:
+            content = file.read()
+        self.assertIn(obj2.id, content)
+        self.assertIn(obj1.id, content)
 
     def test_reload_populates_storage(self):
         """Test that 'reload' repopulates objects from file"""
@@ -64,36 +94,15 @@ class TestFileStorage(unittest.TestCase):
         except Exception as e:
             self.fail(f"Reload crashed with an empty file: {e}")
 
-    def test_save_and_reload(self):
-        """Test save and reload workflow"""
-        obj = BaseModel()
-        self.storage.new(obj)
-        self.storage.save()
-
-        self.storage.reload()
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        self.assertIn(key, self.storage.all())
-        self.assertEqual(self.storage.all()[key].id, obj.id)
-
-    def test_save_overwrites_file(self):
-        """Test that 'save' overwrites the existing file"""
-        obj1 = BaseModel()
-        obj1.save()
-        with open(FileStorage._FileStorage__file_path, 'r') as file:
-            content = file.read()
-        self.assertIn(obj1.id, content)
-
-        obj2 = BaseModel()
-        obj2.save()
-        with open(FileStorage._FileStorage__file_path, 'r') as file:
-            content = file.read()
-        self.assertIn(obj2.id, content)
-        self.assertIn(obj1.id, content)
-
-    def test_new_raises_error_with_invalid_input(self):
-        """Test 'new' raises an error if input is not BaseModel"""
-        with self.assertRaises(AttributeError):
-            self.storage.new(None)
+    def test_reload_with_missing_file(self):
+        """Test 'reload' gracefully handles a missing file"""
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
+        try:
+            self.storage.reload()
+            self.assertTrue(True)
+        except Exception as e:
+            self.fail(f"Reload crashed with missing file: {e}")
 
     def test_reload_with_corrupted_file(self):
         """Test 'reload' handles a corrupted JSON file gracefully"""
@@ -104,15 +113,16 @@ class TestFileStorage(unittest.TestCase):
         except Exception as e:
             self.fail(f"Reload crashed with corrupted file: {e}")
 
-    def test_reload_with_missing_file(self):
-        """Test 'reload' gracefully handles a missing file"""
-        if os.path.exists(self.file_path):
-            os.remove(self.file_path)
-        try:
-            self.storage.reload()
-            self.assertTrue(True)
-        except Exception as e:
-            self.fail(f"Reload crashed with missing file: {e}")
+    def test_save_and_reload(self):
+        """Test save and reload workflow"""
+        obj = BaseModel()
+        self.storage.new(obj)
+        self.storage.save()
+
+        self.storage.reload()
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.assertIn(key, self.storage.all())
+        self.assertEqual(self.storage.all()[key].id, obj.id)
 
 
 if __name__ == "__main__":
