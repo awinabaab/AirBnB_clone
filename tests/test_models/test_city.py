@@ -9,7 +9,7 @@ class TestCity(unittest.TestCase):
     """Test Suite"""
 
     def setUp(self):
-        """Setup instances of City"""
+        """Setup instances of City class for tests"""
         self.obj_dict = {"id": "7ae56a93-0712-43db-bd33-14d63aa60184",
                          "created_at": "2024-11-12T16:13:19.651327",
                          "updated_at": "2024-11-12T16:13:19.651371",
