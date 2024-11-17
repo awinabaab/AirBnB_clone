@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+"""Unit tests for HBNBCommand console"""
 import unittest
 import os
 import sys
@@ -8,7 +10,7 @@ from models.base_model import BaseModel
 
 
 class TestHBNBCommand(unittest.TestCase):
-    """Unit tests for HBNBCommand"""
+    """Test Suite"""
 
     def setUp(self):
         """Set up the test environment"""
