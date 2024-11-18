@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Unit tests for HBNBCommand console"""
+
 import unittest
 import os
 import sys
