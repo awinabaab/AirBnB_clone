@@ -11,7 +11,7 @@ from models.base_model import BaseModel
 
 
 class TestHBNBCommand(unittest.TestCase):
-    """Test Suite"""
+    """Unit tests for HBNBCommand"""
 
     def setUp(self):
         """Set up the test environment"""
@@ -57,7 +57,7 @@ class TestHBNBCommand(unittest.TestCase):
         """Test 'create' with a valid class name"""
         self.console.onecmd("create BaseModel")
         output = self.get_output()
-        self.assertTrue(len(output) > 0)  # An ID is printed
+        self.assertTrue(len(output) > 0)
         key = f"BaseModel.{output}"
         objects = storage.all()
         self.assertIn(key, objects)
